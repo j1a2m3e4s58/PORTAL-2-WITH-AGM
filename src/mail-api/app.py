@@ -2828,13 +2828,18 @@ def auth_login():
             passwords[email] = stored_password
             save_password_store(passwords)
 
-        if not stored_password or not (
-            verify_password(stored_password, password)
-            or (
-                default_initial_password_match
-                and not is_secure_password_hash(stored_password)
-            )
+        password_matches = bool(stored_password) and verify_password(stored_password, password)
+        if (
+            default_initial_password_match
+            and is_initial_user_email(email)
+            and not password_matches
         ):
+            passwords[email] = hash_password_for_storage(password)
+            save_password_store(passwords)
+            stored_password = passwords[email]
+            password_matches = True
+
+        if not stored_password or not password_matches:
             record_audit_log(
                 None,
                 "LOGIN_FAILED",
