@@ -14,6 +14,8 @@ from flask import Flask, jsonify, redirect, request, send_from_directory
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 
+from agm_runtime import AGM_RUNTIME_BP
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 load_dotenv(os.path.join(BASE_DIR, ".env"))
 DATA_DIR = os.getenv("PORTAL_DATA_DIR", BASE_DIR).strip() or BASE_DIR
@@ -187,6 +189,7 @@ INITIAL_USERS = [
     },
 ]
 app = Flask(__name__, static_folder=None)
+app.register_blueprint(AGM_RUNTIME_BP)
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(UPLOADS_DIR, exist_ok=True)
 

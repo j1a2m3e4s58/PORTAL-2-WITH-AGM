@@ -1,5 +1,5 @@
-// AGM Pro Service Worker — Cache-first for app shell, network-first for API
-const CACHE_NAME = "agm-pro-v3";
+// AGM Pro Service Worker - Cache-first for app shell, network-first for API.
+const CACHE_NAME = "agm-pro-v4";
 const BASE_PATH = "/connected-sites/agm";
 const OFFLINE_URL = `${BASE_PATH}/index.html`;
 
@@ -8,7 +8,6 @@ const APP_SHELL = [
   `${BASE_PATH}/index.html`,
 ];
 
-// Install: pre-cache app shell
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)),
@@ -16,31 +15,30 @@ self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// Activate: clean up old caches
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
         keys
-          .filter((k) => k !== CACHE_NAME)
-          .map((k) => caches.delete(k)),
+          .filter((key) => key !== CACHE_NAME)
+          .map((key) => caches.delete(key)),
       ),
     ),
   );
   self.clients.claim();
 });
 
-// Fetch strategy
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // Skip non-GET requests
-  if (request.method !== "GET") return;
+  if (request.method !== "GET") {
+    return;
+  }
 
-  // Network-first for canister/API calls
   const isApiCall =
     url.pathname.startsWith("/api/") ||
+    url.pathname.startsWith("/agm-runtime/") ||
     url.hostname.endsWith(".ic0.app") ||
     url.hostname.endsWith(".icp0.io") ||
     (url.hostname.includes("localhost") && url.pathname.includes("/api/"));
@@ -49,7 +47,6 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          // Cache successful responses for offline fallback
           if (response.ok) {
             const clone = response.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
@@ -61,7 +58,6 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Cache-first for static assets (JS, CSS, fonts, images)
   const isStaticAsset =
     url.pathname.startsWith(`${BASE_PATH}/assets/`) ||
     /\.(js|css|woff2?|ttf|png|jpg|svg|ico)$/.test(url.pathname);
@@ -83,7 +79,6 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Network-first with offline fallback for navigation (HTML)
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
@@ -94,13 +89,11 @@ self.addEventListener("fetch", (event) => {
           }
           return response;
         })
-        .catch(() => caches.match(OFFLINE_URL)),
+        .catch(() => caches.match(OFFLINE_URL) ?? caches.match(`${BASE_PATH}/index.html`)),
     );
-    return;
   }
 });
 
-// Background sync: deferred registrations
 self.addEventListener("sync", (event) => {
   if (event.tag === "sync-registrations") {
     event.waitUntil(syncPendingActions());
@@ -111,7 +104,6 @@ self.addEventListener("sync", (event) => {
 });
 
 async function syncPendingActions() {
-  // Notify the main thread to trigger a re-sync
   const clients = await self.clients.matchAll({ type: "window" });
   for (const client of clients) {
     client.postMessage({ type: "SW_SYNC_REQUESTED" });
