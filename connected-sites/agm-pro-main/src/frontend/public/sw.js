@@ -1,10 +1,11 @@
 // AGM Pro Service Worker — Cache-first for app shell, network-first for API
-const CACHE_NAME = "agm-pro-v3";
-const OFFLINE_URL = "/";
+const AGM_BASE_PATH = "/connected-sites/agm";
+const CACHE_NAME = "agm-pro-v4";
+const OFFLINE_URL = `${AGM_BASE_PATH}/`;
 
 const APP_SHELL = [
-  "/",
-  "/index.html",
+  `${AGM_BASE_PATH}/`,
+  `${AGM_BASE_PATH}/index.html`,
 ];
 
 // Install: pre-cache app shell
@@ -62,7 +63,7 @@ self.addEventListener("fetch", (event) => {
 
   // Cache-first for static assets (JS, CSS, fonts, images)
   const isStaticAsset =
-    url.pathname.startsWith("/assets/") ||
+    url.pathname.startsWith(`${AGM_BASE_PATH}/assets/`) ||
     /\.(js|css|woff2?|ttf|png|jpg|svg|ico)$/.test(url.pathname);
 
   if (isStaticAsset) {
@@ -93,7 +94,11 @@ self.addEventListener("fetch", (event) => {
           }
           return response;
         })
-        .catch(() => caches.match(OFFLINE_URL) ?? caches.match("/index.html")),
+        .catch(
+          () =>
+            caches.match(OFFLINE_URL) ??
+            caches.match(`${AGM_BASE_PATH}/index.html`),
+        ),
     );
     return;
   }
