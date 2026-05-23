@@ -21,7 +21,6 @@ import {
   Bell,
   BookOpen,
   ChevronRight,
-  ClipboardList,
   Download,
   FileText,
   GraduationCap,
@@ -40,7 +39,7 @@ import type { ReactNode } from "react";
 import type { User as PortalUser } from "@/types";
 
 const BRAND_LOGO = withBase("assets/images/bcb-logo.png");
-const AGM_SITE_URL = withBase("connected-sites/agm/index.html");
+const AGM_SITE_URL = withBase("connected-sites/agm/");
 
 // ── Nav Config ─────────────────────────────────────────────────────────────────
 
@@ -94,12 +93,6 @@ const NAV_ITEMS: NavItem[] = [
     to: "/support",
     label: "IT Support",
     icon: <HeadphonesIcon className="h-5 w-5" />,
-  },
-  {
-    to: "/audit",
-    label: "Audit Logs",
-    icon: <ClipboardList className="h-5 w-5" />,
-    departments: ["IT"],
   },
   {
     to: "/backup",
@@ -631,12 +624,6 @@ function DesktopTopNav() {
       icon: <BookOpen className="h-4 w-4" />,
     },
     {
-      to: "/audit",
-      label: "Audit Logs",
-      icon: <ClipboardList className="h-4 w-4" />,
-      departments: ["IT"],
-    },
-    {
       href: AGM_SITE_URL,
       label: "AGM Pro",
       icon: <ExternalLink className="h-4 w-4" />,
@@ -660,11 +647,11 @@ function DesktopTopNav() {
           </div>
         </Link>
 
-        <nav className="flex min-w-0 flex-1 items-center justify-center gap-1">
+        <nav className="flex min-w-0 flex-1 items-center justify-start gap-1 overflow-x-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {visibleItems.map((item) => {
             const isActive = isItemActive(location.pathname, item);
             const commonClassName = cn(
-              "panel-sharp inline-flex min-h-11 items-center justify-center gap-2 px-2 text-[12px] font-semibold whitespace-nowrap transition-smooth lg:px-2.5 xl:px-3 xl:text-sm",
+              "panel-sharp inline-flex min-h-11 shrink-0 items-center justify-center gap-2 px-2 text-[12px] font-semibold whitespace-nowrap transition-smooth lg:px-2.5 xl:px-3 xl:text-sm",
               isActive
                 ? "bg-primary/15 text-primary"
                 : "text-foreground/70 hover:bg-muted/60 hover:text-foreground",
@@ -702,7 +689,7 @@ function DesktopTopNav() {
           })}
         </nav>
 
-        <div className="flex min-w-[190px] shrink-0 items-center justify-end gap-2">
+        <div className="flex min-w-[168px] shrink-0 items-center justify-end gap-2 pl-2">
           <NotificationBell />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
