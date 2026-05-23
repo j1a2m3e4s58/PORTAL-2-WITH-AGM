@@ -1,0 +1,29 @@
+{
+  "overview": "Production-grade Annual General Meeting (AGM) management app with Excel shareholder import, real-time check-in via QR codes, live attendance dashboard, role-based access, full audit trail, and offline-first PWA support. Premium green-themed UI optimized for desktop, tablet, and low-end Android devices.",
+  "features": [
+    "Excel/CSV shareholder import with column mapping and duplicate detection",
+    "In-Person and Proxy registration with verification codes and fraud prevention",
+    "QR code generation and fast scan-to-check-in workflow",
+    "Live metrics dashboard with attendance analytics and quorum status",
+    "Role-based access: Super Admin, Registration Officer, Viewer",
+    "Full audit trail with CSV export for compliance",
+    "Advanced reporting: attendance, proxy, no-show, and badge/pass generation",
+    "Offline-first PWA with local caching and auto-sync",
+    "Encrypted sensitive data with masked ID display",
+    "Premium green-themed UI with large touch controls"
+  ],
+  "category": "productivity",
+  "tags": [
+    "agm",
+    "annual-general-meeting",
+    "shareholder-management",
+    "attendance",
+    "qr-checkin",
+    "reporting",
+    "pwa",
+    "offline-first",
+    "role-based-access",
+    "audit-trail"
+  ],
+  "last_updated": "2026-05-04T22:39:04.228Z"
+}

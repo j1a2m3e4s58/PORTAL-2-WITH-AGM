@@ -5,6 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { hashPassword } from "@/lib/auth-crypto";
 import { apiLogin } from "@/lib/backend-client";
+import {
+  getOfficialEmailValidationMessage,
+  OFFICIAL_EMAIL_EXAMPLE,
+} from "@/lib/official-email";
 import { useAuth } from "@/store/auth";
 import { isOk } from "@/types";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -24,6 +28,11 @@ export default function LoginPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email || !password) return;
+    const emailValidationMessage = getOfficialEmailValidationMessage(email);
+    if (emailValidationMessage) {
+      toast.error(emailValidationMessage);
+      return;
+    }
     setIsLoading(true);
     try {
       const result = await apiLogin(email, hashPassword(password));
@@ -68,7 +77,7 @@ export default function LoginPage() {
           <Input
             id="email"
             type="email"
-            placeholder="you@bawjiasearearuralbank.com"
+            placeholder={OFFICIAL_EMAIL_EXAMPLE}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="h-9 glass-input text-sm"
@@ -163,7 +172,7 @@ export default function LoginPage() {
           </Link>
         </p>
         <p className="mt-2 text-xs text-muted-foreground">
-          Authorized Access Only
+          Use your {OFFICIAL_EMAIL_EXAMPLE.replace("you", "")} email address only.
         </p>
       </div>
     </AuthShell>

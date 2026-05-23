@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "rootDir": "../..",
+    "outDir": "../../dist-server",
+    "strict": false,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "types": ["node", "vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@caffeineai/qr-code": ["./src/lib/qr-code.ts"]
+    }
+  },
+  "include": [
+    "../../scripts/shared-backend-server.ts",
+    "./src/mocks/backend.ts",
+    "./src/data/**/*.json"
+  ],
+  "exclude": [
+    "./src/**/*.tsx",
+    "./src/main.tsx",
+    "./src/App.tsx"
+  ]
+}

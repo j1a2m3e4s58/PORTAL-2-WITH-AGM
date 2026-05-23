@@ -1,0 +1,26 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" fill="#0F1119"/>
+  <rect x="72" y="72" width="880" height="880" fill="url(#panel)" stroke="#2E755B" stroke-width="12"/>
+  <rect x="72" y="72" width="880" height="880" fill="url(#panelGlow)" fill-opacity="0.72"/>
+  <path d="M584 260L737 414V628L584 774H365L267 676V414L420 260Z" fill="none" stroke="url(#stroke)" stroke-width="42" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M552 345H424L347 422V613L424 690H567L664 593" fill="none" stroke="#F3FFF9" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M664 409V595H515" fill="none" stroke="#F3FFF9" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="771" cy="259" r="44" fill="#A6F3CD" fill-opacity="0.14"/>
+  <circle cx="266" cy="317" r="34" fill="#D8FFF2" fill-opacity="0.12"/>
+  <defs>
+    <linearGradient id="panel" x1="136" y1="112" x2="877" y2="905" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2F8E68"/>
+      <stop offset="0.56" stop-color="#23684D"/>
+      <stop offset="1" stop-color="#173F31"/>
+    </linearGradient>
+    <linearGradient id="stroke" x1="301" y1="225" x2="724" y2="873" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#E9FFF6"/>
+      <stop offset="1" stop-color="#88DDB5"/>
+    </linearGradient>
+    <radialGradient id="panelGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(303 253) rotate(49.6251) scale(860.261)">
+      <stop stop-color="#5FB692"/>
+      <stop offset="0.42" stop-color="#5FB692" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#5FB692" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>

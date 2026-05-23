@@ -1,0 +1,325 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("/assets/fonts/SpaceGrotesk.woff2") format("woff2");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DM Sans";
+  src: url("/assets/fonts/DMSans.woff2") format("woff2");
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --font-display: "Space Grotesk", sans-serif;
+    --font-body: "DM Sans", sans-serif;
+    --font-mono: monospace;
+    --radius: 0rem;
+
+    --background: 0.965 0.006 255;
+    --foreground: 0.24 0.02 262;
+    --card: 0.992 0.003 255;
+    --card-foreground: 0.24 0.02 262;
+    --popover: 0.99 0.003 255;
+    --popover-foreground: 0.24 0.02 262;
+
+    --primary: 0.63 0.19 259;
+    --primary-foreground: 0.99 0.004 220;
+
+    --secondary: 0.94 0.008 255;
+    --secondary-foreground: 0.31 0.018 262;
+    --muted: 0.955 0.006 255;
+    --muted-foreground: 0.52 0.014 262;
+
+    --accent: 0.77 0.13 153;
+    --accent-foreground: 0.24 0.02 160;
+
+    --destructive: 0.6 0.19 28;
+    --destructive-foreground: 0.98 0.004 28;
+
+    --border: 0.86 0.01 255;
+    --input: 0.89 0.01 255;
+    --ring: 0.63 0.19 259;
+
+    --chart-1: 0.63 0.19 259;
+    --chart-2: 0.72 0.14 204;
+    --chart-3: 0.7 0.16 153;
+    --chart-4: 0.58 0.18 28;
+    --chart-5: 0.67 0.12 280;
+
+    --sidebar: 0.985 0.003 255;
+    --sidebar-foreground: 0.24 0.02 262;
+    --sidebar-primary: 0.63 0.19 259;
+    --sidebar-primary-foreground: 0.99 0.004 220;
+    --sidebar-accent: 0.95 0.007 255;
+    --sidebar-accent-foreground: 0.24 0.02 262;
+    --sidebar-border: 0.87 0.01 255;
+    --sidebar-ring: 0.63 0.19 259;
+  }
+
+  .dark {
+    --background: 0.15 0.014 270;
+    --foreground: 0.95 0.005 255;
+    --card: 0.2 0.013 270;
+    --card-foreground: 0.95 0.005 255;
+    --popover: 0.19 0.013 270;
+    --popover-foreground: 0.95 0.005 255;
+
+    --primary: 0.67 0.18 259;
+    --primary-foreground: 0.98 0.004 255;
+
+    --secondary: 0.24 0.012 270;
+    --secondary-foreground: 0.93 0.006 255;
+    --muted: 0.22 0.01 270;
+    --muted-foreground: 0.74 0.01 255;
+
+    --accent: 0.7 0.16 153;
+    --accent-foreground: 0.95 0.005 153;
+
+    --destructive: 0.66 0.19 28;
+    --destructive-foreground: 0.97 0.004 28;
+
+    --border: 0.31 0.012 270;
+    --input: 0.27 0.01 270;
+    --ring: 0.67 0.18 259;
+
+    --chart-1: 0.67 0.18 259;
+    --chart-2: 0.72 0.14 204;
+    --chart-3: 0.7 0.16 153;
+    --chart-4: 0.58 0.18 28;
+    --chart-5: 0.67 0.12 280;
+
+    --sidebar: 0.18 0.013 270;
+    --sidebar-foreground: 0.95 0.005 255;
+    --sidebar-primary: 0.67 0.18 259;
+    --sidebar-primary-foreground: 0.98 0.004 255;
+    --sidebar-accent: 0.23 0.012 270;
+    --sidebar-accent-foreground: 0.93 0.006 255;
+    --sidebar-border: 0.3 0.012 270;
+    --sidebar-ring: 0.67 0.18 259;
+  }
+
+  html {
+    background: oklch(var(--background));
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply text-foreground font-body antialiased;
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at 18% 14%, oklch(var(--primary) / 0.09), transparent 22%),
+      radial-gradient(circle at 84% 10%, oklch(var(--accent) / 0.08), transparent 18%),
+      linear-gradient(180deg, oklch(var(--background)) 0%, oklch(var(--secondary)) 100%);
+  }
+
+  #root {
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .chamfer-lg,
+  .chamfer-panel,
+  .shell-panel,
+  [data-slot="card"],
+  .toast-shell,
+  header[class*="bg-card"],
+  aside[class*="bg-card"] {
+    clip-path: none;
+    border-radius: 0;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.16),
+      0 14px 40px rgba(9, 29, 54, 0.18),
+      0 0 0 1px rgba(72, 146, 191, 0.06);
+  }
+
+  .chamfer-md,
+  .surface-chip,
+  [data-slot="button"],
+  [data-slot="input"],
+  [data-slot="textarea"],
+  [class*="bg-card"][class*="border"],
+  [class*="bg-muted"][class*="border"],
+  [class*="bg-primary/10"][class*="border"],
+  [class*="bg-destructive/10"][class*="border"] {
+    clip-path: none;
+    border-radius: 0;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      0 10px 26px rgba(10, 32, 58, 0.12);
+  }
+
+  .chamfer-sm,
+  [class*="rounded-lg"][class*="border"] {
+    clip-path: none;
+    border-radius: 0;
+  }
+
+  .surface-highlight {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .surface-highlight::before {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 22%),
+      linear-gradient(120deg, rgba(82, 132, 255, 0.08), transparent 30%);
+    mix-blend-mode: screen;
+  }
+}
+
+@layer utilities {
+  .transition-smooth {
+    transition: none;
+  }
+
+  .sea-shell {
+    background:
+      linear-gradient(180deg, oklch(var(--card) / 0.98), oklch(var(--card) / 0.9)),
+      linear-gradient(135deg, oklch(var(--primary) / 0.05), transparent 34%);
+    backdrop-filter: blur(10px);
+  }
+
+  .sea-outline {
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      0 0 0 1px rgba(103, 120, 160, 0.18),
+      0 16px 36px rgba(4, 8, 20, 0.18);
+  }
+
+  .agm-mark-shell {
+    isolation: isolate;
+  }
+
+  .agm-mark-sheen::after {
+    content: "";
+    position: absolute;
+    inset: -30%;
+    background: linear-gradient(
+      115deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.08) 38%,
+      rgba(123, 177, 255, 0.34) 50%,
+      rgba(255, 255, 255, 0.08) 62%,
+      transparent 80%
+    );
+    transform: translateX(-65%) rotate(12deg);
+    animation: agm-logo-sheen 3.6s ease-in-out infinite;
+    z-index: 1;
+  }
+}
+
+@keyframes flash-green {
+  0%,
+  100% {
+    background-color: transparent;
+  }
+  20%,
+  60% {
+    background-color: oklch(var(--primary) / 0.25);
+  }
+}
+
+.animate-flash-green {
+  animation: flash-green 2s ease-in-out;
+}
+
+@keyframes chart-rise {
+  from {
+    transform: translateY(20px);
+    opacity: 0.24;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.chart-rise {
+  animation: chart-rise 480ms ease-out both;
+}
+
+@keyframes agm-logo-sheen {
+  0%,
+  100% {
+    transform: translateX(-68%) rotate(12deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  55% {
+    transform: translateX(72%) rotate(12deg);
+    opacity: 1;
+  }
+  75% {
+    opacity: 0;
+  }
+}
+
+@keyframes agm-logo-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 14px 34px rgba(8, 12, 28, 0.35),
+      0 0 0 1px rgba(87, 126, 255, 0.24),
+      0 0 0 0 rgba(87, 126, 255, 0.18);
+  }
+  50% {
+    box-shadow:
+      0 18px 40px rgba(8, 12, 28, 0.44),
+      0 0 0 1px rgba(87, 126, 255, 0.36),
+      0 0 0 12px rgba(87, 126, 255, 0.06);
+  }
+}
+
+@keyframes agm-logo-core {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-1px) scale(1.02);
+  }
+}
+
+.agm-mark-pulse {
+  animation: agm-logo-pulse 4s ease-in-out infinite;
+}
+
+.agm-mark-core {
+  animation: agm-logo-core 4s ease-in-out infinite;
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes agm-splash-progress {
+  0% {
+    transform: translateX(-110%);
+  }
+  100% {
+    transform: translateX(220%);
+  }
+}
+
+.agm-splash-bar {
+  animation: agm-splash-progress 1.5s ease-in-out infinite;
+}

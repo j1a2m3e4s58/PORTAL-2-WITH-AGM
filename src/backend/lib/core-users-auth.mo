@@ -4,7 +4,7 @@ import Runtime "mo:core/Runtime";
 import Types "../types/core-users-auth";
 
 module {
-  // Validate that email ends with @bawjiasearearuralbank.com
+  // Validate that email ends with @bawjiasecommunitybank.com
   public func validateEmail(email : Text) : Bool {
     Runtime.trap("not implemented");
   };

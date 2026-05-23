@@ -1,4 +1,9 @@
 import { withBase } from "./app-base";
+import {
+  getOfficialEmailValidationMessage,
+  normalizeOfficialEmail,
+  OFFICIAL_EMAIL_DOMAIN,
+} from "./official-email";
 
 /**
  * Typed API client for the Bawjiase Staff Portal backend.
@@ -30,7 +35,6 @@ import type {
   UserPermissions,
 } from "../types";
 
-const OFFICIAL_EMAIL_DOMAIN = "@bawjiasearearuralbank.com";
 const IT_ACCESS_CODE = (import.meta.env.VITE_IT_ACCESS_CODE || "").trim();
 const HR_ACCESS_CODE = (import.meta.env.VITE_HR_ACCESS_CODE || "").trim();
 const MAIL_API_URL = (
@@ -442,7 +446,7 @@ const INITIAL_MOCK_USERS: User[] = [
     id: "db-user-6",
     fullname: "Desmond Tettey Quarshie",
     phone: "0243670230",
-    email: "dquarshie@bawjiasearearuralbank.com",
+    email: "dquarshie@bawjiasecommunitybank.com",
     role: "GeneralStaff",
     position: "Staff",
     department: "BANKING OPERATIONS",
@@ -458,7 +462,7 @@ const INITIAL_MOCK_USERS: User[] = [
     id: "db-user-9",
     fullname: "Jane Afua Bruku",
     phone: "0248154869",
-    email: "jbruku@bawjiasearearuralbank.com",
+    email: "jbruku@bawjiasecommunitybank.com",
     role: "GeneralStaff",
     position: "Staff",
     department: "COMPLIANCE",
@@ -474,7 +478,7 @@ const INITIAL_MOCK_USERS: User[] = [
     id: "db-user-5",
     fullname: "Kwabena Asare",
     phone: "0599779664",
-    email: "kasare@bawjiasearearuralbank.com",
+    email: "kasare@bawjiasecommunitybank.com",
     role: "GeneralStaff",
     position: "Staff",
     department: "COMPLIANCE",
@@ -490,7 +494,7 @@ const INITIAL_MOCK_USERS: User[] = [
     id: "db-user-8",
     fullname: "Kwesi Adu Snr Yeenu-Prah",
     phone: "0555443053",
-    email: "kyeenu-prah@bawjiasearearuralbank.com",
+    email: "kyeenu-prah@bawjiasecommunitybank.com",
     role: "HRAdmin",
     position: "Staff",
     department: "HR",
@@ -506,7 +510,7 @@ const INITIAL_MOCK_USERS: User[] = [
     id: "db-user-4",
     fullname: "Ato Asiedu Mensah",
     phone: "0247554428",
-    email: "amensah@bawjiasearearuralbank.com",
+    email: "amensah@bawjiasecommunitybank.com",
     role: "SuperAdmin",
     position: "Staff",
     department: "IT",
@@ -522,7 +526,7 @@ const INITIAL_MOCK_USERS: User[] = [
     id: "db-user-2",
     fullname: "James Lincoln Awuah",
     phone: "0536799490",
-    email: "lawuah@bawjiasearearuralbank.com",
+    email: "lawuah@bawjiasecommunitybank.com",
     role: "SuperAdmin",
     position: "Staff",
     department: "IT",
@@ -538,7 +542,7 @@ const INITIAL_MOCK_USERS: User[] = [
     id: "db-user-3",
     fullname: "Nathaniel Oglie Narh",
     phone: "0246377830",
-    email: "nnarh@bawjiasearearuralbank.com",
+    email: "nnarh@bawjiasecommunitybank.com",
     role: "SuperAdmin",
     position: "Staff",
     department: "IT",
@@ -554,7 +558,7 @@ const INITIAL_MOCK_USERS: User[] = [
     id: "db-user-7",
     fullname: "GABRIEL OWUSU",
     phone: "0246315586",
-    email: "gowusu@bawjiasearearuralbank.com",
+    email: "gowusu@bawjiasecommunitybank.com",
     role: "GeneralStaff",
     position: "Staff",
     department: "RECOVERY",
@@ -1315,9 +1319,10 @@ export async function apiRegister(
   req: RegisterRequest,
 ): Promise<ApiResult<User>> {
   await delay(600);
-  const email = normalizeEmail(req.email);
-  if (!email.endsWith(OFFICIAL_EMAIL_DOMAIN)) {
-    return err("Please use your official Bawjiase email address.");
+  const email = normalizeOfficialEmail(req.email);
+  const emailValidationMessage = getOfficialEmailValidationMessage(email);
+  if (emailValidationMessage) {
+    return err(emailValidationMessage);
   }
   if (req.department === "IT" && IT_ACCESS_CODE && req.accessCode !== IT_ACCESS_CODE) {
     return err("Incorrect IT access code. Registration blocked.");
@@ -1388,7 +1393,11 @@ export async function apiLogin(
   passwordHash: string,
 ): Promise<ApiResult<User>> {
   await delay(700);
-  const normalizedEmail = normalizeEmail(email);
+  const normalizedEmail = normalizeOfficialEmail(email);
+  const emailValidationMessage = getOfficialEmailValidationMessage(normalizedEmail);
+  if (emailValidationMessage) {
+    return err(emailValidationMessage);
+  }
   try {
     const payload = await postMailApiJson("/auth/login", {
       email: normalizedEmail,
@@ -1462,7 +1471,11 @@ export async function apiRequestPasswordReset(
   email: string,
 ): Promise<ApiResult<string>> {
   await delay(500);
-  const normalizedEmail = normalizeEmail(email);
+  const normalizedEmail = normalizeOfficialEmail(email);
+  const emailValidationMessage = getOfficialEmailValidationMessage(normalizedEmail);
+  if (emailValidationMessage) {
+    return err(emailValidationMessage);
+  }
   try {
     const resetPageUrl = new URL(withBase("reset-password"), window.location.origin).toString();
     await postMailApi("/auth/request-password-reset", {
