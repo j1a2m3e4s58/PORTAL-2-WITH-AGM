@@ -244,6 +244,28 @@ def seed_password_store_if_needed() -> None:
     save_password_store(seeded)
 
 
+def reconcile_initial_user_passwords() -> None:
+    if not DEFAULT_INITIAL_PASSWORD:
+        return
+    passwords = load_password_store()
+    changed = False
+    for user in INITIAL_USERS:
+        email = str(user.get("email", "")).strip().lower()
+        if not email or passwords.get(email):
+            continue
+        passwords[email] = hash_password_for_storage(DEFAULT_INITIAL_PASSWORD)
+        changed = True
+    if changed:
+        save_password_store(passwords)
+
+
+def is_initial_user_email(email: str) -> bool:
+    normalized = str(email or "").strip().lower()
+    return any(
+        str(user.get("email", "")).strip().lower() == normalized for user in INITIAL_USERS
+    )
+
+
 def allowed_origins() -> set[str]:
     raw = os.getenv("ALLOWED_ORIGINS", "")
     return {item.strip() for item in raw.split(",") if item.strip()}
@@ -935,6 +957,7 @@ def migrate_legacy_email_domain_data() -> None:
 
 migrate_legacy_email_domain_data()
 seed_password_store_if_needed()
+reconcile_initial_user_passwords()
 
 
 def load_pending_verifications() -> dict[str, dict]:
@@ -2777,7 +2800,23 @@ def auth_login():
 
         passwords = load_password_store()
         stored_password = passwords.get(email)
-        if not stored_password or not verify_password(stored_password, password):
+        default_initial_password_match = (
+            bool(DEFAULT_INITIAL_PASSWORD)
+            and password == DEFAULT_INITIAL_PASSWORD
+            and is_initial_user_email(email)
+        )
+        if not stored_password and default_initial_password_match:
+            stored_password = hash_password_for_storage(DEFAULT_INITIAL_PASSWORD)
+            passwords[email] = stored_password
+            save_password_store(passwords)
+
+        if not stored_password or not (
+            verify_password(stored_password, password)
+            or (
+                default_initial_password_match
+                and not is_secure_password_hash(stored_password)
+            )
+        ):
             record_audit_log(
                 None,
                 "LOGIN_FAILED",
