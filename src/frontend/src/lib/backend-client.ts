@@ -37,9 +37,39 @@ import type {
 
 const IT_ACCESS_CODE = (import.meta.env.VITE_IT_ACCESS_CODE || "").trim();
 const HR_ACCESS_CODE = (import.meta.env.VITE_HR_ACCESS_CODE || "").trim();
-const MAIL_API_URL = (
-  import.meta.env.VITE_MAIL_API_URL || `${window.location.origin}/mail-api/api`
-).replace(/\/$/, "");
+
+function resolveMailApiUrl(): string {
+  const configured = (import.meta.env.VITE_MAIL_API_URL || "").trim();
+  if (typeof window === "undefined") {
+    return (configured || "/mail-api/api").replace(/\/$/, "");
+  }
+
+  const sameOriginUrl = `${window.location.origin}/mail-api/api`;
+  const hostname = window.location.hostname.toLowerCase();
+  const isLocalHost =
+    hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
+
+  if (!configured) {
+    return sameOriginUrl;
+  }
+
+  try {
+    const resolved = new URL(configured, window.location.origin);
+    const isExternalRenderApi =
+      resolved.origin !== window.location.origin &&
+      resolved.hostname.toLowerCase().endsWith(".onrender.com");
+
+    if (!isLocalHost && isExternalRenderApi) {
+      return sameOriginUrl;
+    }
+
+    return resolved.toString().replace(/\/$/, "");
+  } catch {
+    return configured.replace(/\/$/, "");
+  }
+}
+
+const MAIL_API_URL = resolveMailApiUrl();
 const MAIL_API_ROOT = MAIL_API_URL.replace(/\/api$/, "");
 const ANNOUNCEMENT_DISMISS_KEY = "bcb_announcement_dismissals";
 const USERS_STORE_KEY = "bcb_mock_users";

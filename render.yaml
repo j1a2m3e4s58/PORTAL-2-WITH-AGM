@@ -48,7 +48,7 @@ services:
     staticPublishPath: dist
     envVars:
       - key: VITE_MAIL_API_URL
-        value: https://bawjiase-staff-api.onrender.com/api
+        value: /mail-api/api
       - key: HUSKY
         value: "0"
       - key: NPM_CONFIG_IGNORE_SCRIPTS
