@@ -173,7 +173,18 @@ export default function TrainingUploadDocumentPage() {
       if ("err" in result) {
         throw new Error(result.err);
       }
-      toast.success("Document uploaded successfully");
+      const { delivery } = result.ok;
+      if (sendExternalEmails && delivery.emailsFailed > 0) {
+        toast.warning(
+          `Document uploaded, but ${delivery.emailsFailed} external email${delivery.emailsFailed === 1 ? "" : "s"} failed. In-app notifications still went out.`,
+        );
+      } else if (sendExternalEmails && delivery.emailsAttempted === 0) {
+        toast.warning(
+          "Document uploaded, but no external emails were attempted for the eligible staff audience.",
+        );
+      } else {
+        toast.success("Document uploaded successfully");
+      }
       navigate({ to: "/training" });
     } catch (error) {
       toast.error(

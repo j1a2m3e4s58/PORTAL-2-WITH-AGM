@@ -313,14 +313,23 @@ async function uploadMailApiFile(
 ): Promise<Record<string, unknown>> {
   const formData = new FormData();
   formData.append("file", file);
-  const response = await withRequestActivity(path, async () => {
-    const token = getStoredSessionToken();
-    return fetch(withSessionToken(`${MAIL_API_URL}${path}`), {
-      method: "POST",
-      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-      body: formData,
+  let response: Response;
+  try {
+    response = await withRequestActivity(path, async () => {
+      const token = getStoredSessionToken();
+      return fetch(withSessionToken(`${MAIL_API_URL}${path}`), {
+        method: "POST",
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        body: formData,
+      });
     });
-  });
+  } catch (error) {
+    throw new Error(
+      error instanceof Error && error.message
+        ? `Upload request failed before the server could respond. ${error.message}`
+        : "Upload request failed before the server could respond. If this is a large local file, try a smaller video or use a Google Drive link.",
+    );
+  }
   const data = (await response.json().catch(() => ({}))) as Record<string, unknown> & {
     error?: string;
   };
@@ -2666,6 +2675,18 @@ export interface UploadVideoRequest {
   sendExternalEmails?: boolean;
 }
 
+export interface ContentDeliverySummary {
+  notifications: number;
+  emails: number;
+  emailsAttempted: number;
+  emailsFailed: number;
+}
+
+export interface UploadTrainingVideoResult {
+  video: TrainingVideo;
+  delivery: ContentDeliverySummary;
+}
+
 export interface UploadDocumentRequest {
   title: string;
   description: string;
@@ -2679,6 +2700,11 @@ export interface UploadDocumentRequest {
   mandatory?: boolean;
   allowDownload?: boolean;
   sendExternalEmails?: boolean;
+}
+
+export interface UploadTrainingDocumentResult {
+  document: TrainingDocument;
+  delivery: ContentDeliverySummary;
 }
 
 export interface VideoProgress {
@@ -3164,7 +3190,7 @@ export async function apiGetTrainingVideo(
 
 export async function apiUploadTrainingVideo(
   req: UploadVideoRequest,
-): Promise<ApiResult<TrainingVideo>> {
+): Promise<ApiResult<UploadTrainingVideoResult>> {
   await delay(600);
   try {
     const payload = await postMailApiJson("/content/training/videos", {
@@ -3201,8 +3227,18 @@ export async function apiUploadTrainingVideo(
     if (!rawVideo) return err("Video could not be uploaded");
     const video = deserializeTrainingVideo(rawVideo);
     _trainingVideos.unshift(video);
+    persistContentCache(TRAINING_VIDEOS_STORE_KEY, _trainingVideos);
     apiRecordActivity("Training video uploaded", `${video.title} was added.`);
-    return ok(video);
+    const rawDelivery = payload.delivery as Record<string, unknown> | undefined;
+    return ok({
+      video,
+      delivery: {
+        notifications: Number(rawDelivery?.notifications ?? 0),
+        emails: Number(rawDelivery?.emails ?? 0),
+        emailsAttempted: Number(rawDelivery?.emailsAttempted ?? 0),
+        emailsFailed: Number(rawDelivery?.emailsFailed ?? 0),
+      },
+    });
   } catch (error) {
     return err(error instanceof Error ? error.message : "Video could not be uploaded");
   }
@@ -3347,7 +3383,7 @@ export async function apiGetTrainingDocument(
 
 export async function apiUploadTrainingDocument(
   req: UploadDocumentRequest,
-): Promise<ApiResult<TrainingDocument>> {
+): Promise<ApiResult<UploadTrainingDocumentResult>> {
   await delay(600);
   try {
     const payload = await postMailApiJson("/content/training/documents", {
@@ -3383,8 +3419,18 @@ export async function apiUploadTrainingDocument(
     if (!rawDocument) return err("Document could not be uploaded");
     const doc = deserializeTrainingDocument(rawDocument);
     _trainingDocuments.unshift(doc);
+    persistContentCache(TRAINING_DOCUMENTS_STORE_KEY, _trainingDocuments);
     apiRecordActivity("Training document uploaded", `${doc.title} was added.`);
-    return ok(doc);
+    const rawDelivery = payload.delivery as Record<string, unknown> | undefined;
+    return ok({
+      document: doc,
+      delivery: {
+        notifications: Number(rawDelivery?.notifications ?? 0),
+        emails: Number(rawDelivery?.emails ?? 0),
+        emailsAttempted: Number(rawDelivery?.emailsAttempted ?? 0),
+        emailsFailed: Number(rawDelivery?.emailsFailed ?? 0),
+      },
+    });
   } catch (error) {
     return err(error instanceof Error ? error.message : "Document could not be uploaded");
   }

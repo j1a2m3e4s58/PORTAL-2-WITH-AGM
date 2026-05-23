@@ -1629,11 +1629,13 @@ def fanout_content_notification(
         link_to=link_to,
     )
     email_count = 0
+    email_attempted = 0
     if send_external_emails:
         for user in users:
             email = str(user.get("email", "")).strip().lower()
             if not email:
                 continue
+            email_attempted += 1
             try:
                 send_content_notification_email(
                     to_email=email,
@@ -1649,6 +1651,8 @@ def fanout_content_notification(
     return {
         "notifications": notification_count,
         "emails": email_count,
+        "emailsAttempted": email_attempted,
+        "emailsFailed": max(0, email_attempted - email_count),
     }
 
 

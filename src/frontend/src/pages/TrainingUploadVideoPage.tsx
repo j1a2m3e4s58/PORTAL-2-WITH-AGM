@@ -165,7 +165,18 @@ export default function TrainingUploadVideoPage() {
       if ("err" in result) {
         throw new Error(result.err);
       }
-      toast.success("Video uploaded successfully");
+      const { delivery } = result.ok;
+      if (sendExternalEmails && delivery.emailsFailed > 0) {
+        toast.warning(
+          `Video uploaded, but ${delivery.emailsFailed} external email${delivery.emailsFailed === 1 ? "" : "s"} failed. In-app notifications still went out.`,
+        );
+      } else if (sendExternalEmails && delivery.emailsAttempted === 0) {
+        toast.warning(
+          "Video uploaded, but no external emails were attempted for the eligible staff audience.",
+        );
+      } else {
+        toast.success("Video uploaded successfully");
+      }
       navigate({ to: "/training" });
     } catch (error) {
       toast.error(
