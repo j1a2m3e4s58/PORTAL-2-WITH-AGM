@@ -3874,6 +3874,13 @@ def serve_frontend(path: str):
         candidate = os.path.join(FRONTEND_PUBLIC_DIR, requested)
         if os.path.isfile(candidate):
             return send_from_directory(FRONTEND_PUBLIC_DIR, requested, conditional=True)
+        nested_index = os.path.join(candidate, "index.html")
+        if os.path.isfile(nested_index):
+            return send_from_directory(
+                FRONTEND_PUBLIC_DIR,
+                os.path.join(requested, "index.html"),
+                conditional=True,
+            )
 
     index_path = os.path.join(FRONTEND_PUBLIC_DIR, "index.html")
     if os.path.isfile(index_path):
