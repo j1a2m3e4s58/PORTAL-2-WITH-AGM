@@ -25,6 +25,7 @@ The frontend build uses `VITE_MAIL_API_URL=https://bawjiase-staff-api.onrender.c
 ## Important note
 
 The frontend blueprint rewrites `/mail-api/*` to `https://bawjiase-staff-api.onrender.com/*`.
+It also needs dedicated AGM rewrites so `/connected-sites/agm/` resolves to the AGM sub-site entry file before the main portal catch-all route.
 
 If Render gives your API service a different hostname, update that route in Render or in [render.yaml](C:/Users/james/Downloads/Compressed/bawjiase-staff-portal-main/render.yaml), then redeploy the static site.
 
