@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: bawjiase-staff-api
+    runtime: python
+    plan: free
+    rootDir: src/mail-api
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: ALLOWED_ORIGINS
+        value: "*"
+      - key: MAIL_SERVER
+        sync: false
+      - key: MAIL_PORT
+        value: "465"
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_DEFAULT_SENDER
+        sync: false
+      - key: PORTAL_PUBLIC_URL
+        sync: false
+
+  - type: web
+    name: bawjiase-staff-preview
+    runtime: static
+    rootDir: src/frontend
+    buildCommand: corepack enable && corepack pnpm install --frozen-lockfile && corepack pnpm build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_MAIL_API_URL
+        value: https://bawjiase-staff-api.onrender.com/api
+      - key: HUSKY
+        value: "0"
+      - key: NPM_CONFIG_IGNORE_SCRIPTS
+        value: "true"
+    routes:
+      - type: rewrite
+        source: /mail-api/*
+        destination: https://bawjiase-staff-api.onrender.com/*
+      - type: rewrite
+        source: /*
+        destination: /index.html

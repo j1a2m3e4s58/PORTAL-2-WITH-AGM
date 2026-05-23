@@ -1,0 +1,29 @@
+{
+  "overview": "A comprehensive staff management portal for Bawjiase Area Rural Bank PLC, featuring authentication with role-based access, dashboards, announcements with polls, staff directory, training portal, forms centre, IT support, audit logs, and notifications — all in a polished banking-brand design with light/dark mode.",
+  "features": [
+    "Role-based authentication (General Staff, HR Admin, Super Admin) with IT/HR access codes",
+    "Dashboard with announcements, polls, executive stats, and branch/department charts",
+    "Staff directory with department grouping, online status, and admin management",
+    "Training portal with videos and documents, progress tracking, and admin dashboards",
+    "Forms centre with Google Drive and URL link management",
+    "IT Support tickets with incident reports and profile amendments",
+    "Audit logs with full action tracking for IT/Super Admin",
+    "In-app notifications with unread count on every screen",
+    "Profile management with photo uploads",
+    "Complete role-based permissions and route guards",
+    "Banking brand design with glassmorphism cards, navy/green palette, light/dark mode",
+    "Responsive layouts for mobile, tablet, and desktop"
+  ],
+  "category": "business-tools",
+  "tags": [
+    "staff-portal",
+    "banking",
+    "hr-management",
+    "role-based-access",
+    "training",
+    "audit-logs",
+    "dashboard",
+    "notifications"
+  ],
+  "last_updated": "2026-04-19T22:10:45.211Z"
+}

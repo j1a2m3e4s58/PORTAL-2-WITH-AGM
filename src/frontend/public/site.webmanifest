@@ -1,0 +1,28 @@
+{
+  "name": "BCB Staff Portal",
+  "short_name": "BCB Portal",
+  "description": "Internal staff portal for communication, forms, training, and operations.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#08111f",
+  "theme_color": "#0d4f32",
+  "icons": [
+    {
+      "src": "app-icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "app-icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "app-icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
