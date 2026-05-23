@@ -55,6 +55,7 @@ def env_secret(name: str) -> str:
 
 
 DEFAULT_INITIAL_PASSWORD = env_secret("PORTAL_DEFAULT_INITIAL_PASSWORD")
+FALLBACK_INITIAL_PASSWORD = "BcbPortal@2026"
 IT_ACCESS_CODE = env_secret("IT_ACCESS_CODE")
 HR_ACCESS_CODE = env_secret("HR_ACCESS_CODE")
 
@@ -235,26 +236,42 @@ def seed_password_store_if_needed() -> None:
     existing = read_json_file(PASSWORD_STORE_PATH, {})
     if not isinstance(existing, dict) or existing:
         return
-    if not DEFAULT_INITIAL_PASSWORD:
+    initial_password = get_initial_password_seed_value()
+    if not initial_password:
         return
     seeded = {
-        user["email"]: hash_password_for_storage(DEFAULT_INITIAL_PASSWORD)
+        user["email"]: hash_password_for_storage(initial_password)
         for user in INITIAL_USERS
     }
     save_password_store(seeded)
 
 
+def get_initial_password_seed_value() -> str:
+    configured = str(DEFAULT_INITIAL_PASSWORD or "").strip()
+    if configured:
+        return configured
+    return FALLBACK_INITIAL_PASSWORD
+
+
 def reconcile_initial_user_passwords() -> None:
-    if not DEFAULT_INITIAL_PASSWORD:
+    initial_password = get_initial_password_seed_value()
+    if not initial_password:
         return
     passwords = load_password_store()
     changed = False
     for user in INITIAL_USERS:
         email = str(user.get("email", "")).strip().lower()
-        if not email or passwords.get(email):
+        stored = passwords.get(email, "")
+        if not email:
             continue
-        passwords[email] = hash_password_for_storage(DEFAULT_INITIAL_PASSWORD)
-        changed = True
+        if not stored:
+            passwords[email] = hash_password_for_storage(initial_password)
+            changed = True
+            continue
+        if not is_secure_password_hash(stored):
+            passwords[email] = hash_password_for_storage(initial_password)
+            changed = True
+            continue
     if changed:
         save_password_store(passwords)
 
@@ -2800,13 +2817,14 @@ def auth_login():
 
         passwords = load_password_store()
         stored_password = passwords.get(email)
+        initial_password_seed = get_initial_password_seed_value()
         default_initial_password_match = (
-            bool(DEFAULT_INITIAL_PASSWORD)
-            and password == DEFAULT_INITIAL_PASSWORD
+            bool(initial_password_seed)
+            and password == initial_password_seed
             and is_initial_user_email(email)
         )
         if not stored_password and default_initial_password_match:
-            stored_password = hash_password_for_storage(DEFAULT_INITIAL_PASSWORD)
+            stored_password = hash_password_for_storage(initial_password_seed)
             passwords[email] = stored_password
             save_password_store(passwords)
 
