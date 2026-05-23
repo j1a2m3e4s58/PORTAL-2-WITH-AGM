@@ -39,7 +39,7 @@ import type { ReactNode } from "react";
 import type { User as PortalUser } from "@/types";
 
 const BRAND_LOGO = withBase("assets/images/bcb-logo.png");
-const AGM_SITE_URL = withBase("connected-sites/agm/");
+const AGM_SITE_URL = withBase("agm.html");
 
 // ── Nav Config ─────────────────────────────────────────────────────────────────
 

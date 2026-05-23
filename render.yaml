@@ -43,6 +43,12 @@ services:
         source: /mail-api/*
         destination: https://bawjiase-staff-api.onrender.com/*
       - type: rewrite
+        source: /agm
+        destination: /agm.html
+      - type: rewrite
+        source: /agm/
+        destination: /agm.html
+      - type: rewrite
         source: /connected-sites/agm
         destination: /connected-sites/agm/index.html
       - type: rewrite
