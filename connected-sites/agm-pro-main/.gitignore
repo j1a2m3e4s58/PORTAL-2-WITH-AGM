@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.mops/
+.old/
+src/frontend/node_modules/
+src/frontend/dist/
+*.log
+.DS_Store
+Thumbs.db

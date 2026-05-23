@@ -26,6 +26,21 @@ services:
         sync: false
 
   - type: web
+    name: agm-pro-backend
+    runtime: node
+    rootDir: connected-sites/agm-pro-main
+    buildCommand: npx pnpm@10.11.1 install --frozen-lockfile && npx pnpm@10.11.1 build:shared-backend
+    startCommand: npx pnpm@10.11.1 shared:backend
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 20.19.0
+      - key: AGM_SHARED_STATE_FILE
+        value: /opt/render/project/src/connected-sites/agm-pro-main/data/agm-shared-backend-state.json
+      - key: AGM_SHARED_BACKUP_DIR
+        value: /opt/render/project/src/connected-sites/agm-pro-main/data/agm-shared-backups
+
+  - type: web
     name: bawjiase-staff-preview
     runtime: static
     rootDir: src/frontend
